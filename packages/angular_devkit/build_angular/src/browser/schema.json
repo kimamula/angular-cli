@@ -202,6 +202,11 @@
       "type": "string",
       "description": "Path to ngsw-config.json."
     },
+    "serverPush": {
+      "type": "boolean",
+      "description": "Generates a JSON file which maps module request paths to the corresponding resources for HTTP/2 Server Push.",
+      "default": false
+    },
     "skipAppShell": {
       "type": "boolean",
       "description": "Flag to prevent building an app shell.",

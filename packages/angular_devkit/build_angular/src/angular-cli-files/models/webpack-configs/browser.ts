@@ -15,10 +15,10 @@ import { LicenseWebpackPlugin } from 'license-webpack-plugin';
 import { generateEntryPoints, packageChunkSort } from '../../utilities/package-chunk-sort';
 import { BaseHrefWebpackPlugin } from '../../lib/base-href-webpack';
 import { IndexHtmlWebpackPlugin } from '../../plugins/index-html-webpack-plugin';
-import { ExtraEntryPoint } from '../../../browser/schema';
-import { BrowserBuilderSchema } from '../../../browser/schema';
 import { WebpackConfigOptions } from '../build-options';
 import { normalizeExtraEntryPoints } from './utils';
+import { NormalizedBrowserBuilderSchema } from '../../../browser';
+import { PushConfigWebpackPlugin } from '../../lib/push-config-webpack';
 
 /**
 + * license-webpack-plugin has a peer dependency on webpack-sources, list it in a comment to
@@ -27,8 +27,8 @@ import { normalizeExtraEntryPoints } from './utils';
 + * require('webpack-sources')
 + */
 
-export function getBrowserConfig(wco: WebpackConfigOptions) {
-  const { root, projectRoot, buildOptions } = wco;
+export function getBrowserConfig(wco: WebpackConfigOptions<NormalizedBrowserBuilderSchema>) {
+  const { root, buildOptions } = wco;
 
 
   let extraPlugins: any[] = [];
@@ -38,7 +38,7 @@ export function getBrowserConfig(wco: WebpackConfigOptions) {
     // We don't really need a default name because we pre-filtered by lazy only entries.
     [...buildOptions.styles, ...buildOptions.scripts], 'not-lazy')
     .filter(entry => entry.lazy)
-    .map(entry => entry.bundleName)
+    .map(entry => entry.bundleName);
 
   const generateIndexHtml = false;
   if (generateIndexHtml) {
@@ -84,6 +84,10 @@ export function getBrowserConfig(wco: WebpackConfigOptions) {
       perChunkOutput: false,
       outputFilename: `3rdpartylicenses.txt`
     }));
+  }
+
+  if (buildOptions.serverPush) {
+    extraPlugins.push(new PushConfigWebpackPlugin());
   }
 
   const globalStylesBundleNames = normalizeExtraEntryPoints(buildOptions.styles, 'styles')

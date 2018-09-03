@@ -192,6 +192,12 @@ export interface BrowserBuilderSchema {
   ngswConfigPath?: string;
 
   /**
+   * Generates a JSON file which maps module request paths to the corresponding resources
+   * for HTTP/2 Server Push.
+   */
+  serverPush: boolean;
+
+  /**
    * Flag to prevent building an app shell.
    */
   skipAppShell: boolean;
